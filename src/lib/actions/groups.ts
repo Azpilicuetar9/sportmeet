@@ -28,11 +28,13 @@ export async function createGroup(formData: FormData) {
 
   if (error) return { error: error.message }
 
-  await admin.from('group_members').insert({
+  const { error: memberError } = await admin.from('group_members').insert({
     group_id: group.id,
     user_id: user.id,
     role: 'organizer',
   })
+
+  if (memberError) return { error: `ไม่สามารถเพิ่มสมาชิก: ${memberError.message}` }
 
   redirect(`/groups/${group.id}`)
 }
